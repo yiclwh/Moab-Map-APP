@@ -16,7 +16,7 @@ The code uses a **Knockout** observables to automatically display/update filtere
 
 
 
-* Requirements
+* Requirements**
 
   * JQuery
 
@@ -24,7 +24,6 @@ The code uses a **Knockout** observables to automatically display/update filtere
 
   * Knockout
 
-    ** all of them is included in `js/libs/` and `css` folder
   
 
 * Porject files
@@ -52,4 +51,8 @@ The code uses a **Knockout** observables to automatically display/update filtere
 
 
 
-* Double-click on `main.html`
+* Double-click on `main.html` to start the page
+
+
+
+<sub>** all of them are already included in `js/libs/` and `css` folder</sub>
