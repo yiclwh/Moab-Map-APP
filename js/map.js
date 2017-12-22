@@ -79,6 +79,7 @@ function initMap() {
 	ko.applyBindings(new ViewModel());
 }
 
+// TODO: Add click in list select marker on map function
 function updateMarkers(locations) {
 	// Clear existing markers on map before draw filtered markers
 	if (markers) clearMarkers();
@@ -121,6 +122,7 @@ function clearMarkers() {
 function populateInfoWindow(marker, infowindow) {
 	// Check to make sure the infowindow is not already opened on this marker.
 	if (infowindow.marker != marker) {
+        infowindow.marker = null;
 		infowindow.marker = marker;
 		var apiurl_search = 'https://api.flickr.com/services/rest/?' +
 			'method=flickr.photos.search&' +
@@ -156,7 +158,6 @@ function populateInfoWindow(marker, infowindow) {
 				infowindow.setContent('<div class="alert alert-danger"><strong>' +
 					messsage + '</strong></div>');
 			});
-
 
 		infowindow.open(map, marker);
 		// Make sure the marker property is cleared if the infowindow is closed.
