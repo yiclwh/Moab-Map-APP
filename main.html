@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head
+    <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Moab Map APP</title>
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
-        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="css/custom.css">
-        <script src='js/libs/knockout-3.4.2.js'></script>
-        <script src='js/libs/jquery-3.2.1.min.js'></script>
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/custom.css">
     </head>
     <body>
-        <div class="container fill">
+        <main class="container fill">
             <div class="row fill">
-                <div id="side_bar" class="col-8 col-md-3 mt-5">
+                <aside id="side_bar" class="col-8 col-md-3 mt-5">
                     <h4>Moab Attractions</h4>
-                    <div class="input-group my-5">
+                    <section class="input-group my-5">
                         <input type="text" data-bind="textInput: filterInput" class="form-control" placeholder="Search for...">
                         <span class="input-group-btn">
                             <button data-bind="click: updateFilter" class="btn btn-primary" type="button">Filter</button>
                         </span>
-                    </div>
+                    </section>
                     <ul id="markers" data-bind="foreach: filterMarkers" class="list-group">
                         <li class="list-group-item list-group-item-action" data-bind="text: title, click: $parent.showInfoWindow"></li>
                     </ul>
-                </div>
+                </aside>
                 <div id="map" class="col-4 col-md-9"></div>
             </div>
-        </div>
+        </main>
 
-        <script async defer src="js/map.js"></script>
+        <script src='js/libs/knockout-3.4.2.js'></script>
+        <script src='js/libs/jquery-3.2.1.min.js'></script>
+        <script src="js/map.js"></script>
         <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAlTiNzzMm6eInlHBM9gG4GCjafZu8YZk&v=3&callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDAlTiNzzMm6eInlHBM9gG4GCjafZu8YZk&v=3&callback=initMap" onerror="googleMapError()">
         </script>
   </body>
 </html>
-

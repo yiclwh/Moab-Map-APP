@@ -41,7 +41,7 @@ var ViewModel = function() {
 	var self = this;
 	self.currentFilter = ko.observable();
 	self.filterInput = ko.observable();
-	self.markerList = locations;
+	self.markerList = markers;
 	self.filterMarkers = ko.computed(function() {
 		if (!self.currentFilter()) {
 			return self.markerList;
@@ -59,7 +59,11 @@ var ViewModel = function() {
 
 	self.updateFilter = function() {
 		self.currentFilter(self.filterInput());
-	}
+	};
+
+	self.showInfoWindow = function(marker) {
+		google.maps.event.trigger(markers[marker.id], 'click');
+	};
 };
 
 var map;
@@ -74,15 +78,6 @@ function initMap() {
 		},
 		zoom: 13
 	});
-
-	updateMarkers(locations);
-	ko.applyBindings(new ViewModel());
-}
-
-// TODO: Add click in list select marker on map function
-function updateMarkers(locations) {
-	// Clear existing markers on map before draw filtered markers
-	if (markers) clearMarkers();
 	markers = [];
 	var largeInfowindow = new google.maps.InfoWindow();
 	for (var i = 0; i < locations.length; i++) {
@@ -100,8 +95,9 @@ function updateMarkers(locations) {
 		markers.push(marker);
 		// Create an onclick event to open an infowindow at each marker.
 		marker.addListener('click', function() {
+			toggleBounce(this);
 			populateInfoWindow(this, largeInfowindow);
-		});
+        });
 	}
 
 	var bounds = new google.maps.LatLngBounds();
@@ -111,18 +107,65 @@ function updateMarkers(locations) {
 		bounds.extend(markers[i].position);
 	}
 	map.fitBounds(bounds);
+    ko.applyBindings(new ViewModel());
+    
+    google.maps.event.addDomListener(window, 'resize', function() {
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = 0; i < markers.length; i++) {
+            bounds.extend(markers[i].position);
+        }
+        map.fitBounds(bounds);
+    });
 }
 
-function clearMarkers() {
+function toggleBounce(marker) {
 	for (var i = 0; i < markers.length; i++) {
-		markers[i].setMap(null);
+		if (markers[i].getAnimation() !== null) {
+			markers[i].setAnimation(null);
+		}
+	}
+	marker.setAnimation(google.maps.Animation.BOUNCE);
+}
+
+function googleMapError() {
+	document.body.innerHTML = '';
+	alert("Failed loading Google Map, please check your internet connection and try again.");
+}
+
+function updateMarkers(filterMarkers) {
+	// HIDE existing markers on map before draw filtered markers
+	if (markers) hideMarkers();
+	var bounds = new google.maps.LatLngBounds();
+	// Extend the boundaries of the map for each marker and display the marker
+	if (filterMarkers && filterMarkers.length > 0) {
+		for (var i = 0; i < filterMarkers.length; i++) {
+			markers[filterMarkers[i].id].setVisible(true);
+			bounds.extend(filterMarkers[i].position);
+		}
+		map.fitBounds(bounds);
+	} else {
+		alert("No result found. Please use another keyword and try.");
+		resetCenter();
+	}
+}
+
+function resetCenter() {
+	map.setCenter({
+		lat: 38.5733,
+		lng: -109.5498
+	}, 13);
+}
+
+function hideMarkers() {
+	for (var i = 0; i < markers.length; i++) {
+		markers[i].setVisible(false);
 	}
 }
 
 function populateInfoWindow(marker, infowindow) {
 	// Check to make sure the infowindow is not already opened on this marker.
 	if (infowindow.marker != marker) {
-        infowindow.marker = null;
+		infowindow.marker = null;
 		infowindow.marker = marker;
 		var apiurl_search = 'https://api.flickr.com/services/rest/?' +
 			'method=flickr.photos.search&' +
@@ -159,6 +202,7 @@ function populateInfoWindow(marker, infowindow) {
 					messsage + '</strong></div>');
 			});
 
+		map.setCenter(marker.location, 13);
 		infowindow.open(map, marker);
 		// Make sure the marker property is cleared if the infowindow is closed.
 		infowindow.addListener('closeclick', function() {
